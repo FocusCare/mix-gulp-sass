@@ -16,6 +16,7 @@ module.exports = function(config) {
     var sassSrc = config.src;
     var componentsConfig = config.componentsSass;
     var excludeSrc = config.excludeSrc;
+    var version = config.version;
 
     if (gutil.env.env) {
         isProduction = gutil.env.env === 'production';
@@ -119,7 +120,6 @@ module.exports = function(config) {
     });
 
     gulp.task('hash:css', function(cb) {
-        var version = config.version;
         glob(version.src, function(err, files) {
             if (err) {
                 throw err;
@@ -160,8 +160,10 @@ module.exports = function(config) {
     function printVersionMap(versionPath, array) {
         var str = '';
         var maps = [];
-        var base = config.version.base;
+        var base = version.base;
         var checkSame = {};
+
+        console.log(array);
 
         array.forEach(function(item) {
             var key;
@@ -180,14 +182,14 @@ module.exports = function(config) {
                 checkSame[key] = item;
             }
 
-            maps.push('"' + key + '" => "' + item + '"');
+            maps.push('"' + key + '" => "' + version.per + value + '"');
         });
 
         str += '<?php return array(\n';
         str += maps.join(',\n');
         str += '\n); ?>';
 
-        fs.writeFileSync(phpPath, str);
+        fs.writeFileSync(versionPath, str);
 
         console.log('hash写入 ' + versionPath + ' 成功');
         console.log('共 ' + maps.length + ' 个文件');

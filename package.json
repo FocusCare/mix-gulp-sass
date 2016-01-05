@@ -1,6 +1,6 @@
 {
   "name": "mix-gulp-sass",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "业务SASS打包",
   "main": "index.js",
   "scripts": {

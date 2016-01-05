@@ -163,8 +163,7 @@ module.exports = function(config) {
         var base = version.base;
         var checkSame = {};
 
-        console.log(array);
-
+        array.sort();
         array.forEach(function(item) {
             var key;
             var value;

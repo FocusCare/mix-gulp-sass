@@ -1,7 +1,7 @@
 module.exports = {
     includePaths: '../sass',
-    src: '../sass/*.scss',
-    excludeSrc: '../sass/_*',
+    src: ['../sass/*.scss'],
+    excludeSrc: ['../sass/_*'],
     devDest: '../local_css',
     prodDest: '../build_css',
     cleanSrc: '../build_css/**/*.css',

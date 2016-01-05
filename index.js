@@ -31,9 +31,9 @@ module.exports = function(config) {
         if (typeof componentsConfig.src === 'string') {
             sassSrc.push('!' + componentsConfig.src);
         } else {
-            componentsConfig.src.each(function(item) {
-                sassSrc.push('!' + item);
-            });
+            for (var i in componentsConfig.src) {
+                sassSrc.push('!' + componentsConfig.src[i]);
+            }
         }
     }
     if (excludeSrc) {
@@ -43,9 +43,9 @@ module.exports = function(config) {
         if (typeof excludeSrc === 'string') {
             sassSrc.push('!' + excludeSrc);
         } else {
-            excludeSrc.each(function(item) {
-                sassSrc.push('!' + item);
-            });
+            for (var j in excludeSrc) {
+                sassSrc.push('!' + excludeSrc[j]);
+            }
         }
     }
 

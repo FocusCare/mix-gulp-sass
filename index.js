@@ -13,6 +13,7 @@ var gutil = require('gulp-util');
 
 
 module.exports = function(config) {
+    var sassIncludePaths = config.includePaths;
     var sassSrc = config.src;
     var componentsConfig = config.componentsSass;
     var excludeSrc = config.excludeSrc;
@@ -49,7 +50,6 @@ module.exports = function(config) {
         }
     }
 
-    var sassIncludePaths = config.includePaths;
 
     gulp.task('clean:sass', function(cb) {
         return rimraf(config.cleanSrc, cb);
@@ -87,7 +87,7 @@ module.exports = function(config) {
         gulp.watch(sassSrc, function(e) {
             var processors = [imageUrl];
 
-            return gulp.src(e.path)
+            return gulp.src(e.path, {base: sassIncludePaths})
                 .pipe(sass({
                     includePaths: sassIncludePaths
                 }))

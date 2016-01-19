@@ -90,6 +90,9 @@ module.exports = function(config) {
             return gulp.src(e.path, {base: sassIncludePaths})
                 .pipe(sass({
                     includePaths: sassIncludePaths
+                }).on('error', function(err) {
+                    sass.logError(err);
+                    this.emit('end');
                 }))
                 .pipe(postcss(processors))
                 .pipe(autoprefixer({

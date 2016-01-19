@@ -91,7 +91,7 @@ module.exports = function(config) {
                 .pipe(sass({
                     includePaths: sassIncludePaths
                 }).on('error', function(err) {
-                    sass.logError(err);
+                    console.log(err);
                     this.emit('end');
                 }))
                 .pipe(postcss(processors))

@@ -1,4 +1,3 @@
-var gulp = require('gulp');
 var gulpLog = require('gulp-log');
 var sass = require('gulp-sass');
 var postcss = require('gulp-postcss');
@@ -12,7 +11,7 @@ var minifyCss = require('gulp-minify-css');
 var gutil = require('gulp-util');
 
 
-module.exports = function(config) {
+module.exports = function(config, gulp) {
     var sassIncludePaths = config.includePaths;
     var sassSrc = config.src;
     var componentsConfig = config.componentsSass;

@@ -1,2 +1,3 @@
 var config = require('./config');
-require('../index')(config);
+var gulp = require('gulp');
+require('../index')(config, gulp);

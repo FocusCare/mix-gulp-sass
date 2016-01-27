@@ -9,6 +9,9 @@ var glob = require('glob');
 var fs = require('fs');
 var minifyCss = require('gulp-minify-css');
 var gutil = require('gulp-util');
+var upyunUpload = require('upyun_cdn');
+var Q = require('q');
+var qiniu = require('./lib/qiniu_deploy');
 
 
 module.exports = function(config, gulp) {
@@ -17,6 +20,7 @@ module.exports = function(config, gulp) {
     var componentsConfig = config.componentsSass;
     var excludeSrc = config.excludeSrc;
     var version = config.version;
+    var cdnConfig = config.cdn;
 
     if (gutil.env.env) {
         isProduction = gutil.env.env === 'production';
@@ -48,6 +52,17 @@ module.exports = function(config, gulp) {
             }
         }
     }
+
+    gulp.task('mix-gulp-sass', function() {
+        console.log('命令说明:')
+        console.log('    clean:sass              =====>           清除打包代码');
+        console.log('    build:sass              =====>           打包sass');
+        console.log('    watch:sass              =====>           监控sass');
+        console.log('    hash:css                =====>           刷新版本文件');
+        console.log('    cdn:css                 =====>           上传cdn');
+        console.log('    cdncss:upyun            =====>           上传upyun');
+        console.log('    cdncss:qiniu            =====>           上传七牛');
+    });
 
 
     gulp.task('clean:sass', function(cb) {
@@ -129,7 +144,28 @@ module.exports = function(config, gulp) {
             printVersionMap(version.dest, files);
             cb();
         });
-    })
+    });
+
+    gulp.task('cdn:css', ['cdncss:upyun', 'cdncss:qiniu'])
+
+    gulp.task('cdncss:upyun', function() {
+        if (cdnConfig.upyun) {
+            return upyunUpload({ src: cdnConfig.src, dest: cdnConfig.dest }, cdnConfig.upyun);
+
+        }
+    });
+
+    gulp.task('cdncss:qiniu', function() {
+        if (cdnConfig.qiniu) {
+            var deferred = Q.defer();
+            gulp.src(cdnConfig.src)
+                .pipe(qiniu(cdnConfig.qiniu, {
+                    dir: cdnConfig.dest,
+                }, deferred));
+
+            return deferred.promise;
+        }
+    });
 
     function imageUrl(css) {
         var pattern = /image-url\("(.*)"\)(.*)/g;

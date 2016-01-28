@@ -19,6 +19,27 @@
         componentsSass: {
             src: 'sass/components_css/com.scss',
             dest: 'components_css'
-        } 
+        },
+        cdn: {
+            src: './build_css/*.css',
+            dest: '/v2/build/fuwu/',
+            upyun: {
+                operator: 'travisci',
+                password: 'testtest',
+                bucket: 'travis'
+            },
+            qiniu: {
+                accessKey: 'ak',
+                secretKey: 'sk',
+                bucket: "your_bucket",
+                private: false
+            }
+        }
     }
 ```
+
+## 查看命令
+
+``` 
+    gulp mix-gulp-sass 
+``` 

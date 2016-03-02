@@ -16,6 +16,7 @@ module.exports = {
         dest: './components_css'
     },
     cdn: {
+        path: 'https://su.yzcdn.cn',
         src: './build_css/*.css',
         dest: '/v2/build/fuwu/',
         upyun: {

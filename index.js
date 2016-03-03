@@ -272,7 +272,7 @@ module.exports = function(config, gulp) {
                     for (var i = 0, len = arr.length; i < len; i++) {
                         tmp = arr[i];
                         // showcase css inline到html中后，css文件相对域名为wap.koudaitong.com，所以图片路径需要使用绝对路径
-                        tmp = tmp.replace(pattern, 'url("' + cdnConfig.path || 'https://b.yzcdn.cn' + '/v2/image/$1")$2');
+                        tmp = tmp.replace(pattern, 'url("' + (cdnConfig.path || 'https://b.yzcdn.cn') + '/v2/image/$1")$2');
                         res.push(tmp);
                     }
                     res = res.join(' ');

@@ -20,7 +20,7 @@ module.exports = function(config, gulp) {
     var componentsConfig = config.componentsSass;
     var excludeSrc = config.excludeSrc;
     var version = config.version;
-    var cdnConfig = config.cdn;
+    var cdnConfig = config.cdn || {};
 
     if (gutil.env.env) {
         isProduction = gutil.env.env === 'production';

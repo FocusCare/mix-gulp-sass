@@ -18,9 +18,11 @@ module.exports = function(config, gulp) {
     var sassIncludePaths = config.includePaths;
     var sassSrc = config.src;
     var componentsConfig = config.componentsSass;
+    var inlineConfig = config.inlineSass;
     var excludeSrc = config.excludeSrc;
     var version = config.version;
     var cdnConfig = config.cdn || {};
+    var isProduction;
 
     if (gutil.env.env) {
         isProduction = gutil.env.env === 'production';
@@ -54,7 +56,7 @@ module.exports = function(config, gulp) {
     }
 
     gulp.task('mix-gulp-sass', function() {
-        console.log('命令说明:')
+        console.log('命令说明:');
         console.log('    clean:sass              =====>           清除打包代码');
         console.log('    build:sass              =====>           打包sass');
         console.log('    watch:sass              =====>           监控sass');
@@ -69,7 +71,7 @@ module.exports = function(config, gulp) {
         return rimraf(config.cleanSrc, cb);
     });
 
-    gulp.task('build:sass', ['build:componentsCss'], function() {
+    gulp.task('build:sass', ['build:componentsCss', 'build:inlineCss'], function() {
         var processors = [imageUrl];
 
         var dest = config.devDest;
@@ -85,7 +87,7 @@ module.exports = function(config, gulp) {
             .pipe(postcss(processors))
             .pipe(autoprefixer({
                 browsers: ['ChromeAndroid > 1', 'iOS >= 4', 'ie > 6', 'ff > 4']
-            }))
+            }));
 
         if (isProduction) {
             stream = stream.pipe(gulpMd5());
@@ -97,7 +99,7 @@ module.exports = function(config, gulp) {
         return stream;
     });
 
-    gulp.task('watch:sass', ['build:sass', 'watch:componentsCss'], function() {
+    gulp.task('watch:sass', ['build:sass', 'watch:componentsCss', 'watch:inlineCss'], function() {
         gulp.watch(sassSrc, function(e) {
             var processors = [imageUrl];
 
@@ -122,7 +124,7 @@ module.exports = function(config, gulp) {
         });
     });
 
-    gulp.task('build:componentsCss', isProduction ? ['clean:sass'] : [], function() {
+    gulp.task('build:componentsCss', function() {
         if (componentsConfig) {
             return processSass(componentsConfig.src, componentsConfig.dest);
         }
@@ -131,8 +133,28 @@ module.exports = function(config, gulp) {
 
     gulp.task('watch:componentsCss', function() {
         if (componentsConfig) {
-            gulp.watch(componentsConfig.src, function() {
-                return processSass(componentsConfig.src, componentsConfig.dest);
+            gulp.watch(componentsConfig.src, function(e) {
+                return processSass(e.path, componentsConfig.dest);
+            });
+        }
+        return;
+    });
+
+    gulp.task('build:inlineCss', function() {
+        if (inlineConfig) {
+            inlineConfig.forEach(function(config) {
+                return processSass(config.src, config.dest);
+            });
+        }
+        return;
+    });
+
+    gulp.task('watch:inlineCss', function() {
+        if (inlineConfig) {
+            inlineConfig.forEach(function(config) {
+                gulp.watch(config.src, function(e) {
+                    return processSass(e.path, config.dest);
+                });
             });
         }
         return;
@@ -165,7 +187,7 @@ module.exports = function(config, gulp) {
             var deferred = Q.defer();
             gulp.src(cdnConfig.src)
                 .pipe(qiniu(cdnConfig.qiniu, {
-                    dir: cdnConfig.dest,
+                    dir: cdnConfig.dest
                 }, deferred));
 
             return deferred.promise;

@@ -103,9 +103,7 @@ module.exports = function(config, gulp) {
         gulp.watch(sassSrc, function(e) {
             var processors = [imageUrl];
 
-            return gulp.src(e.path, {
-                    base: sassIncludePaths
-                })
+            return gulp.src(e.path)
                 .pipe(sass({
                     includePaths: sassIncludePaths
                 }).on('error', function(err) {

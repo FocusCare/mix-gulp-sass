@@ -5,6 +5,7 @@ module.exports = {
     devDest: './local_css',
     prodDest: './build_css',
     cleanSrc: './build_css/**/*.css',
+    watchBasePath: './sass',
     version: {
         per: 'build_css/',
         base: './build_css',

@@ -71,7 +71,7 @@ module.exports = function(config, gulp) {
         return rimraf(config.cleanSrc, cb);
     });
 
-    gulp.task('build:sass', ['build:componentsCss', 'build:inlineCss'], function() {
+    gulp.task('build:sass', ['clean:sass', 'build:componentsCss', 'build:inlineCss'], function() {
         var processors = [imageUrl];
 
         var dest = config.devDest;

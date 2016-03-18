@@ -1,6 +1,6 @@
 {
   "name": "mix-gulp-sass",
-  "version": "2.0.8",
+  "version": "2.1.0",
   "description": "业务SASS打包",
   "main": "index.js",
   "scripts": {
@@ -35,7 +35,10 @@
     "q": "^1.4.1",
     "rimraf": "^2.5.0",
     "through2": "^2.0.0",
-    "upyun_cdn": "^0.1.4"
+    "upyun_cdn": "^0.1.4",
+    "browser-sync": "^2.11.1",
+    "gulp-sass-grapher": "^0.1.4",
+    "gulp-watch": "^4.3.5"
   },
   "devDependencies": {
     "gulp": "^3.9.0"

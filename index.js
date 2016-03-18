@@ -12,6 +12,9 @@ var gutil = require('gulp-util');
 var upyunUpload = require('upyun_cdn');
 var Q = require('q');
 var qiniu = require('./lib/qiniu_deploy');
+var browserSync = require('browser-sync').create();
+var sassGrapher = require('gulp-sass-grapher');
+var watch = require('gulp-watch');
 
 
 module.exports = function(config, gulp) {
@@ -99,29 +102,32 @@ module.exports = function(config, gulp) {
         return stream;
     });
 
-    gulp.task('watch:sass', ['build:sass', 'watch:componentsCss', 'watch:inlineCss'], function() {
-        gulp.watch(sassSrc, function(e) {
-            var processors = [imageUrl];
+    gulp.task('watch:sass', ['watch:componentsCss', 'watch:inlineCss'], function() {
+        var processors = [imageUrl];
+        var watchBasePath = config.watchBasePath;
 
-            return gulp.src(e.path, {
-                base: config.watchBasePath
-            })
-                .pipe(sass({
-                    includePaths: sassIncludePaths
-                }).on('error', function(err) {
-                    console.log(err);
-                    this.emit('end');
-                }))
-                .pipe(postcss(processors))
-                .pipe(autoprefixer({
-                    browsers: ['ChromeAndroid > 1', 'iOS >= 4', 'ie > 6', 'ff > 4']
-                }))
-                .pipe(gulp.dest(config.devDest))
-                .pipe(gulpLog('编译完毕 --->'));
+        sassGrapher.init(watchBasePath, { loadPaths: watchBasePath });
+        browserSync.init({
+            port: 3888
         });
-        gulp.watch(excludeSrc, function() {
-            gulp.run('build:sass');
-        });
+
+        return watch(sassSrc, {
+            base: watchBasePath
+        })
+            .pipe(sassGrapher.ancestors())
+            .pipe(sass({
+                includePaths: sassIncludePaths
+            }).on('error', function(err) {
+                console.log(err);
+                this.emit('end');
+            }))
+            .pipe(postcss(processors))
+            .pipe(autoprefixer({
+                browsers: ['ChromeAndroid > 1', 'iOS >= 4', 'ie > 6', 'ff > 4']
+            }))
+            .pipe(gulp.dest(config.devDest))
+            .pipe(browserSync.stream())
+            .pipe(gulpLog('编译完毕 --->'));
     });
 
     gulp.task('build:componentsCss', function() {

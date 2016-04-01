@@ -71,7 +71,11 @@ module.exports = function(config, gulp) {
 
 
     gulp.task('clean:sass', function(cb) {
-        return rimraf(config.cleanSrc, cb);
+        var cleanSrc = config.devDest;
+        if (isProduction) {
+            cleanSrc = config.prodDest;
+        }
+        return rimraf(cleanSrc, cb);
     });
 
     gulp.task('build:sass', ['clean:sass', 'build:componentsCss', 'build:inlineCss'], function() {

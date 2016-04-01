@@ -1,10 +1,9 @@
 module.exports = {
     includePaths: './sass',
-    src: ['./sass/*.scss'],
+    src: ['./sass/**/*.scss'],
     excludeSrc: ['../sass/_*'],
     devDest: './local_css',
     prodDest: './build_css',
-    cleanSrc: './build_css/**/*.css',
     watchBasePath: './sass',
     version: {
         per: 'build_css/',

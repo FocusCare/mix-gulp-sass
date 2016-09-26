@@ -13,8 +13,7 @@ var upyunUpload = require('upyun_cdn');
 var Q = require('q');
 var qiniu = require('./lib/qiniu_deploy');
 var browserSync = require('browser-sync').create();
-var sassGrapher = require('gulp-sass-grapher');
-var watch = require('gulp-watch');
+var cached = require('gulp-cached');
 
 
 module.exports = function(config, gulp) {
@@ -23,6 +22,7 @@ module.exports = function(config, gulp) {
     var componentsConfig = config.componentsSass;
     var inlineConfig = config.inlineSass;
     var excludeSrc = config.excludeSrc;
+    var watchBasePath = config.watchBasePath;
     var version = config.version;
     var cdnConfig = config.cdn || {};
     var isProduction;
@@ -87,6 +87,7 @@ module.exports = function(config, gulp) {
         }
 
         var stream = gulp.src(sassSrc)
+            .pipe(cached('browserSync:sass'))
             .pipe(sass({
                 includePaths: sassIncludePaths,
                 outputStyle: 'compressed'
@@ -106,22 +107,21 @@ module.exports = function(config, gulp) {
         return stream;
     });
 
-    gulp.task('watch:sass', ['watch:componentsCss', 'watch:inlineCss'], function() {
-        var processors = [imageUrl];
-        var watchBasePath = config.watchBasePath;
-
-        sassGrapher.init(watchBasePath, { loadPaths: watchBasePath });
+    gulp.task('watch:sass', ['watch:componentsCss', 'watch:inlineCss'], function () {
         browserSync.init({
             port: 3888
         });
+        gulp.watch(sassSrc, ['sync:sass']);
+    });
 
-        return watch(sassSrc, {
-            base: watchBasePath
-        })
-            .pipe(sassGrapher.ancestors())
+    gulp.task('sync:sass', function () {
+        var processors = [imageUrl];
+
+        gulp.src(sassSrc)
+            .pipe(cached('browserSync:sass'))
             .pipe(sass({
                 includePaths: sassIncludePaths
-            }).on('error', function(err) {
+            }).on('error', function (err) {
                 console.log(err);
                 this.emit('end');
             }))
@@ -129,6 +129,7 @@ module.exports = function(config, gulp) {
             .pipe(autoprefixer({
                 browsers: ['ChromeAndroid > 1', 'iOS >= 4', 'ie > 6', 'ff > 4']
             }))
+            // .pipe(remember('browserSync:sass'))
             .pipe(gulp.dest(config.devDest))
             .pipe(browserSync.stream())
             .pipe(gulpLog('编译完毕 --->'));
